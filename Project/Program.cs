@@ -11,38 +11,51 @@ namespace Project
 {
     internal static class Program
     {
-        private static void Main() =>
-            new StartProgram().Start().GetAwaiter().GetResult();
+        private static IServiceProvider _services;
+        private static readonly ServiceCollection ServiceCollections = new ServiceCollection();
+
+        private static void Main()
+        {
+            ContainerConfiguration();
+
+            var startProgram = _services.GetService<StartProgram>();
+
+            startProgram.Start().GetAwaiter().GetResult();
+        }
+
+        private static void ContainerConfiguration()
+        {
+            ServiceCollections.AddScoped<StartProgram>();
+            var servicesContainer = new ServiceDependency();
+            _services = servicesContainer.Register(ServiceCollections);
+        }
     }
 
     public class StartProgram
     {
-        private IServiceProvider _services;
-        private readonly ServiceCollection _serviceCollections = new ServiceCollection();
+        private readonly IExcelDataExtraction _excelDataExtraction;
+        private readonly IBruteForceMethod _bruteForceMethod;
+
+        public StartProgram(IExcelDataExtraction excelDataExtraction, IBruteForceMethod bruteForceMethod)
+        {
+            _excelDataExtraction = excelDataExtraction;
+            _bruteForceMethod = bruteForceMethod;
+        }
+
         public Task Start()
         {
-            ContainerConfiguration();
-
-            var excelDataExtraction = _services.GetService<IExcelDataExtraction>();
-            var listaCidadePartida = excelDataExtraction.ExtractFromExcel();
+            var listaCidadePartida = _excelDataExtraction.ExtractFromExcel();
 
             var listaResultado = new List<Resultado>();
             foreach (var cidade in listaCidadePartida)
             {
-                var caixeiroViajanteBruteForce = _services.GetService<ICaixeiroViajanteBruteForce>();
-                var resultado =  caixeiroViajanteBruteForce.GerarRota(cidade.NomeCidade, listaCidadePartida);
+                var resultado = _bruteForceMethod.GerarRota(cidade.NomeCidade, listaCidadePartida);
                 listaResultado.Add(resultado);
             }
 
             listaResultado = listaResultado.OrderBy(s => s.DistanciaPercorrida).ToList();
             
             return null;
-        }
-
-        private void ContainerConfiguration()
-        {
-            var servicesContainer = new ServiceDependency();
-            _services = servicesContainer.Register(_serviceCollections);
         }
     }
 }

@@ -3,7 +3,7 @@ using Project.Class;
 
 namespace Project.Interfaces
 {
-    public interface ICaixeiroViajanteBruteForce
+    public interface IBruteForceMethod
     {
         Resultado GerarRota(string cidadeDestino, List<CidadePartida> listaCidadePartida);
     }

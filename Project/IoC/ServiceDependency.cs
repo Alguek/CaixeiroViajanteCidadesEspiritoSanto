@@ -2,9 +2,9 @@
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Project.CaixeiroViajante;
 using Project.Extraction;
 using Project.Interfaces;
+using Project.SolutionMethods.BruteForce;
 
 namespace Project.IoC
 {
@@ -28,7 +28,7 @@ namespace Project.IoC
             services.AddScoped<IExcelDataExtraction>(provider => new
                 ExcelDataExtraction(filePath));
 
-            services.AddTransient<ICaixeiroViajanteBruteForce, CaixeiroViajanteBruteForce>();
+            services.AddTransient<IBruteForceMethod, BruteForceMethod>();
 
             return services.BuildServiceProvider();
         }

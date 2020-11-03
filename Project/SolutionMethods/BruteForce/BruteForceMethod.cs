@@ -5,20 +5,16 @@ using MoreLinq.Extensions;
 using Project.Class;
 using Project.Interfaces;
 
-namespace Project.CaixeiroViajante
+namespace Project.SolutionMethods.BruteForce
 {
-    public class CaixeiroViajanteBruteForce : ICaixeiroViajanteBruteForce
+    public class BruteForceMethod : IBruteForceMethod
     {
         private List<CidadePartida> _listaCidadePartida;
-        private readonly List<CidadeDestino> _listaCidadeVisitadas;
-
-        public CaixeiroViajanteBruteForce()
-        {
-            _listaCidadeVisitadas = new List<CidadeDestino>();
-        }
-
+        private List<CidadeDestino> _listaCidadeVisitadas;
+        
         public Resultado GerarRota(string cidadeDestino, List<CidadePartida> listaCidadePartida)
         {
+            _listaCidadeVisitadas = new List<CidadeDestino>();
             _listaCidadePartida = listaCidadePartida;
 
             AdicionaPassagemListaVisitados(cidadeDestino);
@@ -38,7 +34,8 @@ namespace Project.CaixeiroViajante
             var cidadePartida = ObterCidadePartida(stringCidadePartida);
 
             var destinos = cidadePartida.Destinos.Where(s =>
-                !_listaCidadeVisitadas.Select(z => z.NomeCidadeOrigem).Contains(s.NomeCidadeOrigem)).ToList();
+                !_listaCidadeVisitadas.Select(z => z.NomeCidadeOrigem).Contains(s.NomeCidadeOrigem))
+                .ToList();
 
             var cidadeDestinoMenorDistancia = destinos.Where(s => s.NomeCidadeOrigem != stringCidadePartida)
                 .MinBy(s => s.DistanciaDestino).FirstOrDefault();
