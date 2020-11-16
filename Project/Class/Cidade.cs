@@ -2,9 +2,9 @@
 
 namespace Project.Class
 {
-    public class CidadePartida
+    public class Cidade
     {
-        public CidadePartida()
+        public Cidade()
         {
             Destinos = new List<CidadeDestino>();
         }

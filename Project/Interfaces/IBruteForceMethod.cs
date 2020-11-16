@@ -5,6 +5,6 @@ namespace Project.Interfaces
 {
     public interface IBruteForceMethod
     {
-        Resultado GerarRota(string cidadeDestino, List<CidadePartida> listaCidadePartida);
+        Resultado GerarRota(string cidadeDestino, List<Cidade> listaCidadePartida);
     }
 }

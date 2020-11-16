@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Project.Extraction;
 using Project.Interfaces;
 using Project.SolutionMethods.BruteForce;
+using Project.SolutionMethods.GeneticAlgorithm;
 
 namespace Project.IoC
 {
@@ -29,6 +30,9 @@ namespace Project.IoC
                 ExcelDataExtraction(filePath));
 
             services.AddTransient<IBruteForceMethod, BruteForceMethod>();
+            
+            services.AddScoped<IGeneticAlgorithmMethod, GeneticAlgorithmMethod>();
+            services.AddScoped<IIndividualController, IndividualController>();
 
             return services.BuildServiceProvider();
         }

@@ -14,15 +14,15 @@ namespace Project.Extraction
     public class ExcelDataExtraction : IExcelDataExtraction
     {
         private readonly string _filePath;
-        private readonly List<CidadePartida> _listaCidadePartidas;
+        private readonly List<Cidade> _listaCidadePartidas;
 
         public ExcelDataExtraction(string filePath)
         {
             _filePath = filePath;
-            _listaCidadePartidas = new List<CidadePartida>();
+            _listaCidadePartidas = new List<Cidade>();
         }
 
-        public List<CidadePartida> ExtractFromExcel()
+        public List<Cidade> ExtractFromExcel()
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             using var stream = File.Open(_filePath, FileMode.Open, FileAccess.Read);
@@ -40,7 +40,7 @@ namespace Project.Extraction
                 if (CriaCidadeSeTextoForOrigem(coluna1) || SeTextoForCabecalho(coluna1, coluna2))
                     continue;
 
-                InsereCidadesDestino(_listaCidadePartidas.Last(), coluna1, coluna2, coluna3, coluna4);
+                InserirCidadesDestino(_listaCidadePartidas.Last(), coluna1, coluna2, coluna3, coluna4);
             }
 
             return _listaCidadePartidas.OrderBy(s => s.NomeCidade).ToList();
@@ -59,9 +59,9 @@ namespace Project.Extraction
 
             if (_listaCidadePartidas.LastOrDefault() != null)
                 _listaCidadePartidas.Last().Destinos =
-                    _listaCidadePartidas.Last().Destinos.OrderBy(s => s.NomeCidadeOrigem).ToList();
+                    _listaCidadePartidas.Last().Destinos.OrderBy(s => s.NomeCidade).ToList();
 
-            _listaCidadePartidas.Add(new CidadePartida {NomeCidade = nomeCidadePartida});
+            _listaCidadePartidas.Add(new Cidade {NomeCidade = nomeCidadePartida});
             return true;
         }
 
@@ -74,19 +74,19 @@ namespace Project.Extraction
                    coluna2.ToString().RemoveAccents().ToUpper() == "DISTANCIA";
         }
 
-        private void InsereCidadesDestino(CidadePartida cidadePartida, params object[] listaObjetos)
+        private void InserirCidadesDestino(Cidade cidade, params object[] listaObjetos)
         {
             for (var i = 0; i < 2; i++)
             {
-                if (listaObjetos[0] == null || listaObjetos[3] == null)
+                if (listaObjetos[0] == null || listaObjetos[3] == null
+                                            || cidade.NomeCidade == listaObjetos[i * 2].ToString().LimparString())
                     continue;
 
-                var cidade = new CidadeDestino()
+                cidade.Destinos.Add(new CidadeDestino()
                 {
-                    NomeCidadeOrigem = listaObjetos[i * 2].ToString().LimparString(),
+                    NomeCidade = listaObjetos[i * 2].ToString().LimparString(),
                     DistanciaDestino = Convert.ToInt32(listaObjetos[i * 2 + 1])
-                };
-                cidadePartida.Destinos.Add(cidade);
+                });
             }
         }
     }

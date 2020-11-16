@@ -35,27 +35,22 @@ namespace Project
     {
         private readonly IExcelDataExtraction _excelDataExtraction;
         private readonly IBruteForceMethod _bruteForceMethod;
+        private readonly IGeneticAlgorithmMethod _geneticAlgorithmMethod;
 
-        public StartProgram(IExcelDataExtraction excelDataExtraction, IBruteForceMethod bruteForceMethod)
+        public StartProgram(IExcelDataExtraction excelDataExtraction, IBruteForceMethod bruteForceMethod, IGeneticAlgorithmMethod geneticAlgorithmMethod)
         {
             _excelDataExtraction = excelDataExtraction;
             _bruteForceMethod = bruteForceMethod;
+            _geneticAlgorithmMethod = geneticAlgorithmMethod;
         }
 
-        public Task Start()
+        public async Task<bool> Start()
         {
             var listaCidadePartida = _excelDataExtraction.ExtractFromExcel();
 
-            var listaResultado = new List<Resultado>();
-            foreach (var cidade in listaCidadePartida)
-            {
-                var resultado = _bruteForceMethod.GerarRota(cidade.NomeCidade, listaCidadePartida);
-                listaResultado.Add(resultado);
-            }
-
-            listaResultado = listaResultado.OrderBy(s => s.DistanciaPercorrida).ToList();
+            _geneticAlgorithmMethod.Handler(listaCidadePartida);
             
-            return null;
+            return await Task.FromResult(true);
         }
     }
 }

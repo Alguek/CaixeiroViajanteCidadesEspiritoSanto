@@ -5,6 +5,6 @@ namespace Project.Interfaces
 {
     public interface IExcelDataExtraction
     {
-        List<CidadePartida> ExtractFromExcel();
+        List<Cidade> ExtractFromExcel();
     }
 }
